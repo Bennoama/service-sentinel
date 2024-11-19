@@ -1,4 +1,4 @@
-module pingSampler
+module service-sentinel
 
 go 1.23.3
 
