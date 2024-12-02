@@ -13,9 +13,7 @@ func init () {
 		log.Fatal("ERROR! Failed to init Database, exiting", err)
 		panic(err)
 	}
-
 	monitoring.StartMonitoring()
-
 	server.Init()
 }
 

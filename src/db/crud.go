@@ -21,12 +21,11 @@ func InsertMonitor (Monitor monitors.ServiceMonitor) (error) {
     return nil
 }
 
-func GetMonitorByKey[T monitors.ServiceMonitor] (ID uint, _ T) (T, error) {
-    var item T
-    if err := gormDB.First(&item, ID).Error; err != nil {
-        return item, err
+func GetMonitorByKey[T monitors.ServiceMonitor] (ID uint, searched T) (T, error) {
+    if err := gormDB.First(&searched, ID).Error; err != nil {
+        return searched, err
     }
-    return item, nil
+    return searched, nil
 }
 
 func DeleteMonitorByKey[T monitors.ServiceMonitor] (ID uint, _ T) () {
