@@ -1,14 +1,15 @@
-package samplers
+package monitors
 
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"time"
 )
 
-type HttpSampler struct {
+type HttpMonitor struct {
 	BaseInfo BaseMonitorInformation `gorm:"embedded"`
 	HttpInfo HttpMonitorInformation `gorm:"embedded"`
 }
@@ -32,8 +33,11 @@ func (httpResponse HttpResponse) UpdateDB() (error) {
 	return nil
 }
 
+func (httpMonitor HttpMonitor) GetBaseInformation() (BaseMonitorInformation) {
+	return httpMonitor.BaseInfo
+}
 
-func (httpSampler HttpSampler) readFields(httpsRes *http.Response) (HttpResponse, error) {
+func (httpMonitor HttpMonitor) readFields(httpsRes *http.Response) (HttpResponse, error) {
 	response := HttpResponse{}
 	data, err := io.ReadAll(httpsRes.Body)
 	if err != nil {
@@ -44,14 +48,15 @@ func (httpSampler HttpSampler) readFields(httpsRes *http.Response) (HttpResponse
 	return response, nil
 }
 
-func (httpSampler HttpSampler) Sample() (MonitorResponse, error) {
+func (httpMonitor HttpMonitor) Monitor() (MonitorResponse, error) {
+	log.Println("Http Monitor with id:", httpMonitor.BaseInfo.Model.ID)
 	startTime := time.Now()
-	httpRes, err := http.Get(httpSampler.HttpInfo.Url)
+	httpRes, err := http.Get(httpMonitor.HttpInfo.Url)
 	latency := time.Since(startTime)
 	if err != nil {
 		return HttpResponse{}, err
 	}
-	response, err := httpSampler.readFields(httpRes)
+	response, err := httpMonitor.readFields(httpRes)
 	if err != nil {
 		return HttpResponse{}, err
 	}

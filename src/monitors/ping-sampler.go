@@ -1,8 +1,10 @@
-package samplers
+package monitors
 
 import (
+	"log"
 	"net"
 	"time"
+
 	"github.com/tatsushid/go-fastping"
 )
 
@@ -11,7 +13,7 @@ type PingMonitorInformation struct {
 	Network string
 }
 
-type PingSampler struct {
+type PingMonitor struct {
 	BaseInfo BaseMonitorInformation `gorm:"embedded"`
 	PingInfo PingMonitorInformation `gorm:"embedded"`
 }
@@ -21,10 +23,14 @@ type PingResponse struct {
 	latency time.Duration
 }
 
+func (pingMonitor PingMonitor) GetBaseInformation() (BaseMonitorInformation) {
+	return pingMonitor.BaseInfo
+}
 
-func (pingSampler PingSampler) Sample() (MonitorResponse, error) {
+func (pingMonitor PingMonitor) Monitor() (MonitorResponse, error) {
+	log.Println("Ping Monitor with id:", pingMonitor.BaseInfo.Model.ID)
 	pinger := fastping.NewPinger()
-	ipAddress, err := net.ResolveIPAddr(pingSampler.PingInfo.Network, pingSampler.PingInfo.Address)
+	ipAddress, err := net.ResolveIPAddr(pingMonitor.PingInfo.Network, pingMonitor.PingInfo.Address)
 	if err != nil {
 		return PingResponse{}, err
 	}
