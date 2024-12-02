@@ -7,6 +7,7 @@ import (
 )
 
 type MonitorResponse interface {
+	UpdateDB()(error)
 }
 
 type BaseMonitorResponse struct {

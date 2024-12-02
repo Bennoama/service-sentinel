@@ -1,8 +1,10 @@
 package monitors
 
 import (
+	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/tatsushid/go-fastping"
@@ -44,4 +46,9 @@ func (pingMonitor PingMonitor) Monitor() (MonitorResponse, error) {
 		return PingResponse{}, err
 	}
 	return response, nil
+}
+
+func (pingRes PingResponse) UpdateDB() (error) {
+	fmt.Fprintln(os.Stdout, []any{"Ping updating db -> %v", pingRes}...)
+	return nil
 }
