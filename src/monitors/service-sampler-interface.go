@@ -20,7 +20,7 @@ type BaseMonitorInformation struct {
 }
 
 type ServiceMonitor interface {
-	MonitorOnce() (MonitorResponse, error)
+	Monitor() (MonitorResponse, error)
 	GetBaseInformation() (BaseMonitorInformation)
 	GetType() (ServiceMonitorType)
 	// IsOk(Response) (bool)

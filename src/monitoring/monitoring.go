@@ -21,7 +21,7 @@ func StartMonitoring() error {
 func monitorWithInterval(monitor monitors.ServiceMonitor) {
 	for {
 		var err error
-		monitor.MonitorOnce()
+		monitor.Monitor()
 		monitorType := monitor.GetType()
 		switch monitorType {
 		case monitors.HttpMonitorType:

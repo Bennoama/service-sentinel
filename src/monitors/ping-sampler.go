@@ -29,7 +29,7 @@ func (pingMonitor PingMonitor) GetBaseInformation() (BaseMonitorInformation) {
 	return pingMonitor.BaseInfo
 }
 
-func (pingMonitor PingMonitor) MonitorOnce() (MonitorResponse, error) {
+func (pingMonitor PingMonitor) Monitor() (MonitorResponse, error) {
 	log.Println("Ping Monitor with id:", pingMonitor.BaseInfo.Model.ID)
 	pinger := fastping.NewPinger()
 	ipAddress, err := net.ResolveIPAddr(pingMonitor.PingInfo.Network, pingMonitor.PingInfo.Address)
