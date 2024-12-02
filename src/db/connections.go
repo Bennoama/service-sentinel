@@ -2,8 +2,10 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
-	"service-sentinel/samplers"
+	"service-sentinel/monitors"
+	"service-sentinel/utils"
 
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
@@ -13,8 +15,9 @@ import (
 var gormDB *gorm.DB
 var sqlDB *sql.DB
 
-func connectToDB () (error) {
-	dsn := "host=localhost user=postgres password=bgr5znTj dbname=serviceSentinel port=5432 sslmode=disable"
+func connectToDB (dbName string) (error) {
+	password := utils.GetDBPassword()
+	dsn := fmt.Sprintf("host=localhost user=postgres password=%s dbname=%s port=5432 sslmode=disable", password, dbName)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
 		return err
@@ -28,21 +31,20 @@ func connectToDB () (error) {
 }
 
 func createTables () (error) {
-	httpErr := gormDB.AutoMigrate(&samplers.HttpSampler{})
+	httpErr := gormDB.AutoMigrate(&monitors.HttpMonitor{})
 	if httpErr != nil {
 		return httpErr
 	}
 
-	pingErr := gormDB.AutoMigrate(&samplers.PingSampler{})
+	pingErr := gormDB.AutoMigrate(&monitors.PingMonitor{})
 	if pingErr != nil {
 		return pingErr
 	}
 	return nil
 }
 
-
-func Init () (error) {
-	connectionErr := connectToDB()
+func Init (dbName string) (error) {
+	connectionErr := connectToDB(dbName)
 	if connectionErr != nil {
 		log.Fatal("ERROR in connecting to db:", connectionErr)
 		panic(connectionErr)

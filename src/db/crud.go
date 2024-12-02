@@ -2,58 +2,71 @@ package db
 
 import (
 	"errors"
-	"service-sentinel/samplers"
+	"service-sentinel/monitors"
 )
 
-func InsertMonitor (sampler samplers.ServiceSampler) (error) {
-    switch s := sampler.(type) {
-    case samplers.HttpSampler:
-        if err := gormDB.Create(s).Error; err != nil {
+func InsertMonitor (Monitor monitors.ServiceMonitor) (error) {
+    switch s := Monitor.(type) {
+    case monitors.HttpMonitor:
+        if err := gormDB.Create(&s).Error; err != nil {
             return err
         }
-    case samplers.PingSampler:
-        if err := gormDB.Create(s).Error; err != nil {
+    case monitors.PingMonitor:
+        if err := gormDB.Create(&s).Error; err != nil {
             return err
         }
     default:
-        return errors.New("unsupported sampler type")
+        return errors.New("unsupported Monitor type")
     }
     return nil
 }
 
+func GetMonitorByKey[T monitors.ServiceMonitor] (ID uint, _ T) (T, error) {
+    var item T
+    if err := gormDB.First(&item, ID).Error; err != nil {
+        return item, err
+    }
+    return item, nil
+}
 
-func GetHttpMonitors () ([]samplers.HttpSampler, error) {
-	return GetMonitors(samplers.HttpSampler{})
+func DeleteMonitorByKey[T monitors.ServiceMonitor] (ID uint, _ T) () {
+    var item T
+    gormDB.Delete(&item, ID)
 }
 
 
-func GetPingMonitors () ([]samplers.PingSampler, error) {
-	return GetMonitors(samplers.PingSampler{})
+func GetHttpMonitors () ([]monitors.HttpMonitor, error) {
+	return GetGenericMonitors(monitors.HttpMonitor{})
 }
 
-func GetAllMonitors() ([]samplers.ServiceSampler, error) {
-    httpMonitors, err := GetHttpMonitors()
+
+func GetPingMonitors () ([]monitors.PingMonitor, error) {
+	return GetGenericMonitors(monitors.PingMonitor{})
+}
+
+func GetAllMonitors() ([]monitors.ServiceMonitor, error) {
+    httpmonitors, err := GetHttpMonitors()
     if err != nil {
         return nil, err
     }
 
-    pingMonitors, err := GetPingMonitors()
+    pingmonitors, err := GetPingMonitors()
     if err != nil {
         return nil, err
     }
 
-    var allMonitors []samplers.ServiceSampler
-    for _, monitor := range httpMonitors {
-        allMonitors = append(allMonitors, monitor)
+    var allmonitors []monitors.ServiceMonitor
+    for _, monitor := range httpmonitors {
+        allmonitors = append(allmonitors, monitor)
     }
-    for _, monitor := range pingMonitors {
-        allMonitors = append(allMonitors, monitor)
+    for _, monitor := range pingmonitors {
+        allmonitors = append(allmonitors, monitor)
     }
 
-    return allMonitors, nil
+    return allmonitors, nil
 }
 
-func GetMonitors[T samplers.ServiceSampler](model T) ([]T, error) {
+func GetGenericMonitors[T monitors.ServiceMonitor](T) ([]T, error) {
     var items []T
     if err := gormDB.Find(&items).Error; err != nil {
         return nil, err
