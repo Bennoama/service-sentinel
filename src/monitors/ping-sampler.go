@@ -29,7 +29,7 @@ func (pingMonitor PingMonitor) GetBaseInformation() (BaseMonitorInformation) {
 	return pingMonitor.BaseInfo
 }
 
-func (pingMonitor PingMonitor) Monitor() (MonitorResponse, error) {
+func (pingMonitor PingMonitor) MonitorOnce() (MonitorResponse, error) {
 	log.Println("Ping Monitor with id:", pingMonitor.BaseInfo.Model.ID)
 	pinger := fastping.NewPinger()
 	ipAddress, err := net.ResolveIPAddr(pingMonitor.PingInfo.Network, pingMonitor.PingInfo.Address)
@@ -52,3 +52,8 @@ func (pingRes PingResponse) UpdateDB() (error) {
 	fmt.Fprintln(os.Stdout, []any{"Ping updating db -> %v", pingRes}...)
 	return nil
 }
+
+func (PingMonitor) GetType () (ServiceMonitorType) {
+	return PingMonitorType
+}
+

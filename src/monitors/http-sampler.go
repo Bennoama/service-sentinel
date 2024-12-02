@@ -48,7 +48,11 @@ func (httpMonitor HttpMonitor) readFields(httpsRes *http.Response) (HttpResponse
 	return response, nil
 }
 
-func (httpMonitor HttpMonitor) Monitor() (MonitorResponse, error) {
+func (HttpMonitor) GetType () (ServiceMonitorType) {
+	return HttpMonitorType
+}
+
+func (httpMonitor HttpMonitor) MonitorOnce() (MonitorResponse, error) {
 	log.Println("Http Monitor with id:", httpMonitor.BaseInfo.Model.ID)
 	startTime := time.Now()
 	httpRes, err := http.Get(httpMonitor.HttpInfo.Url)

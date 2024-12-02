@@ -20,8 +20,16 @@ type BaseMonitorInformation struct {
 }
 
 type ServiceMonitor interface {
-	Monitor() (MonitorResponse, error)
+	MonitorOnce() (MonitorResponse, error)
 	GetBaseInformation() (BaseMonitorInformation)
+	GetType() (ServiceMonitorType)
 	// IsOk(Response) (bool)
 	// Notify() (error)
 }
+
+type ServiceMonitorType int
+
+const (
+	HttpMonitorType = iota
+	PingMonitorType
+)
