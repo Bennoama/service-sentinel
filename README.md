@@ -28,7 +28,7 @@ It features a user-friendly UI for creating and managing monitors, as well as a 
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/service-sentinel.git
+   git clone https://github.com/Bennoama/service-sentinel.git
    cd service-sentinel
 
 2. Install dependencies:
